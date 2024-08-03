@@ -9,7 +9,7 @@ use yii\jui\DatePicker;
 $this->title = 'My Yii Application';
 ?>
 <div class="site-index mt-3 mb-3 d-grid gx-1 gy-2 gap-5">
-<?/*    <div class="p-5 mb-4 bg-transparent rounded-3">
+<?php /*    <div class="p-5 mb-4 bg-transparent rounded-3">
         <div class="container-fluid py-5 text-center">
             <h1 class="display-4">Congratulations!</h1>
             <p class="fs-5 fw-light">You have successfully created your Yii-powered application.</p>
@@ -55,9 +55,9 @@ $this->title = 'My Yii Application';
     </div>*/?>
     
         
-        <?/*<pre> echo json_encode($categories, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); </pre>*/?>
+        <?php /*<pre> echo json_encode($categories, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); </pre>*/?>
         <div class="text-center">
-            <?= Html::beginForm(['/class'], 'post') ?>
+            <?= Html::beginForm(['/class/index'], 'post') ?>
                 <table class="m-auto" style="text-align: left;min-width: 400px;">
                     <tr>
                         <td colspan="2" style="font-size:16px;background-color: #919191;color: white;padding: 10px 20px;font-weight: bolder;">Выберите класс и дату</td>

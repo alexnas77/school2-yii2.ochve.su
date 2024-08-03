@@ -179,7 +179,7 @@ class ClassController extends \yii\web\Controller
         
         $footer_sum = (new \yii\db\Query())
                 ->select(['s.date',
-'IFNULL(s.category_id, p.category_id) category_id',
+'ANY_VALUE(IFNULL(s.category_id, p.category_id)) category_id',
 'SUM(s.breakfast_free) count_breakfast_free',
 'SUM(s.breakfast) count_breakfast',
 'SUM(s.lunch) count_lunch',
@@ -204,17 +204,41 @@ class ClassController extends \yii\web\Controller
                 ->andWhere('(c.category_id = :category_id OR c.parent = :category_id2)',['category_id' => $category_id,'category_id2' => $category_id])
                 ->andWhere('c.enabled = 1')
                 ->andWhere('p.enabled = 1')
-                ->groupBy(['s.date','IFNULL(s.category_id, p.category_id)'])
+                ->andWhere('s.date IS NOT NULL')
+                ->groupBy(['s.date'])
                 ->one();
-        
-        $footer_sum['sum_before'] = array_sum(ArrayHelper::getColumn($query->all(), 'before'));
-        $footer_sum['sum_after'] = array_sum(ArrayHelper::getColumn($query->all(), 'after'));
+        if(!is_array($footer_sum)) {
+            $footer_sum = [
+                'count_breakfast_free' => 0,
+                'count_breakfast' => 0,
+                'count_lunch' => 0,
+                'count_lunch2' => 0,
+                'count_lunch3' => 0,
+                'count_dinner' => 0,
+                'count_lunch_m' => 0,
+                'count_dinner_m' => 0,
+                'sum_cash' => 0,
+                'sum_card' => 0,
+                'sum_breakfast_free' => 0,
+                'sum_breakfast' => 0,
+                'sum_lunch' => 0,
+                'sum_lunch2' => 0,
+                'sum_lunch3' => 0,
+                'sum_dinner' => 0,
+                'sum_lunch_m' => 0,
+                'sum_dinner_m' => 0,
+            ];
+        }
+        \Yii::debug($footer_sum);
+        $footer_sum['sum_before'] = array_sum(ArrayHelper::getColumn($models, 'before'));
+        $footer_sum['sum_after'] = array_sum(ArrayHelper::getColumn($models, 'after'));
         $footer_sum['sum_spent'] = array_sum([
             $footer_sum['sum_breakfast_free'],
             $footer_sum['sum_breakfast'],
             $footer_sum['sum_lunch'],
             $footer_sum['sum_lunch2'],
             $footer_sum['sum_lunch3'],
+            $footer_sum['sum_dinner'],
             $footer_sum['sum_lunch_m'],
             $footer_sum['sum_dinner_m'],
             ]);
