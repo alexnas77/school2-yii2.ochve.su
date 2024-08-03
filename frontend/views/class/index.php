@@ -1,18 +1,20 @@
 <?php
-
-use frontend\models\Stat;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\grid\ActionColumn;
 //use yii\grid\GridView;
-use frontend\components\GridView;
-use yii\widgets\Pjax;
-use yii\widgets\ActiveForm;
-/** @var yii\web\View $this */
-/** @var frontend\models\StatSearch $searchModel */
-/** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Stats';
+
+use frontend\components\GridView;
+use frontend\models\StatSearch;
+use yii\data\ActiveDataProvider;
+use yii\helpers\Html;
+use yii\web\View;
+use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
+use frontend\models\Settings;
+/** @var View $this */
+/** @var StatSearch $searchModel */
+/** @var ActiveDataProvider $dataProvider */
+
+$this->title = mb_ucfirst(mb_strtolower(Settings::getParam('company_name'))).' класс '.$model->category;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="stat-index">
@@ -33,9 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php 
     
     $yes_no = function ($model, $key, $index, $column) {
-                    \Yii::debug($model);
+                    Yii::debug($model);
                     $text = isset($model[$column->attribute]) && (bool)(int)$model[$column->attribute] ? "<span class=\"text-success\">Да</span>" : "<span class=\"text-danger\">Нет</span>"; 
-                    return !\Yii::$app->user->isGuest ?
+                    return !Yii::$app->user->isGuest ?
                             Html::a($text, '#updateModal', 
                                     [
                                         'class' => 'd-block', 
@@ -51,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 
     $dinner = function ($model, $key, $index, $column) {
                     $text = (string)(int)$model[$column->attribute] . " ед.";
-                    return !\Yii::$app->user->isGuest ?
+                    return !Yii::$app->user->isGuest ?
                             Html::a($text, '#updateModal', 
                                     [
                                         'class' => 'd-block', 
@@ -66,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }; 
     $pay = function ($model, $key, $index, $column) {
                     $text = (string)(int)$model[$column->attribute];
-                    return !\Yii::$app->user->isGuest ?
+                    return !Yii::$app->user->isGuest ?
                             Html::a($text, '#updateModal', 
                                     [
                                         'class' => 'd-block', 
@@ -119,7 +121,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 //'header' => 'Завтрак бесплатный<br />'.(isset($model->new_breakfast_free) ? $model->new_breakfast_free.' руб' : ''),
-                'header' => !\Yii::$app->user->isGuest 
+                'header' => !Yii::$app->user->isGuest 
                             ? Html::a(
                                     'Завтрак бесплатный<br />'.(isset($model->new_breakfast_free) ? $model->new_breakfast_free.' руб' : ''), 
                                     '#updateModal', 
@@ -135,10 +137,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     )
                             : 'Завтрак бесплатный<br />'.(isset($model->new_breakfast_free) ? $model->new_breakfast_free.' руб' : ''),
                 'attribute' =>'breakfast_free',
-                'contentOptions' => ['class' => (!\Yii::$app->user->isGuest ? 'hover' : null)],
+                'contentOptions' => ['class' => (!Yii::$app->user->isGuest ? 'hover' : null)],
                 'value' => $yes_no,
                 'format' => 'raw',
-                'headerOptions' => ['class' => !\Yii::$app->user->isGuest ? 'hover' : ''],
+                'headerOptions' => ['class' => !Yii::$app->user->isGuest ? 'hover' : ''],
                 'footer' => floatval($footer_sum['count_breakfast_free']),
                 'footerOptions' => ['data-footer' => [
                                         floatval($footer_sum['sum_breakfast_free']),
@@ -152,7 +154,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 //'header' => 'Завтрак<br />'.(isset($model->new_breakfast) ? $model->new_breakfast.' руб' : ''),
-                'header' => !\Yii::$app->user->isGuest 
+                'header' => !Yii::$app->user->isGuest 
                             ? Html::a(
                                     'Завтрак<br />'.(isset($model->new_breakfast) ? $model->new_breakfast.' руб' : ''), 
                                     '#updateModal', 
@@ -168,10 +170,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     )
                             : 'Завтрак<br />'.(isset($model->new_breakfast) ? $model->new_breakfast.' руб' : ''),                
                 'attribute' =>'breakfast',
-                'contentOptions' => ['class' => (!\Yii::$app->user->isGuest ? 'hover' : null)],
+                'contentOptions' => ['class' => (!Yii::$app->user->isGuest ? 'hover' : null)],
                 'value' => $yes_no,
                 'format' => 'raw',
-                'headerOptions' => ['class' => !\Yii::$app->user->isGuest ? 'hover' : ''],
+                'headerOptions' => ['class' => !Yii::$app->user->isGuest ? 'hover' : ''],
                 'footer' => floatval($footer_sum['count_breakfast']),
                 'footerOptions' => ['data-footer' => [
                     floatval($footer_sum['sum_breakfast']),
@@ -180,7 +182,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 //'header' => 'Обед<br />'.(isset($model->new_lunch) ? $model->new_lunch.' руб' : ''),
-                'header' => !\Yii::$app->user->isGuest 
+                'header' => !Yii::$app->user->isGuest 
                             ? Html::a(
                                     'Обед<br />'.(isset($model->new_lunch) ? $model->new_lunch.' руб' : ''), 
                                     '#updateModal', 
@@ -196,10 +198,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     )
                             : 'Обед<br />'.(isset($model->new_lunch) ? $model->new_lunch.' руб' : ''),  
                 'attribute' =>'lunch',
-                'contentOptions' => ['class' => (!\Yii::$app->user->isGuest ? 'hover' : null)],
+                'contentOptions' => ['class' => (!Yii::$app->user->isGuest ? 'hover' : null)],
                 'value' => $yes_no,
                 'format' => 'raw',
-                'headerOptions' => ['class' => !\Yii::$app->user->isGuest ? 'hover' : ''],
+                'headerOptions' => ['class' => !Yii::$app->user->isGuest ? 'hover' : ''],
                 'footer' => floatval($footer_sum['count_lunch']),
                 'footerOptions' => ['data-footer' => [
                     floatval($footer_sum['sum_lunch']),
@@ -208,7 +210,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 //'header' => 'Завтрак льготный<br />'.(isset($model->new_lunch2) ? $model->new_lunch2.' руб' : ''),
-                'header' => !\Yii::$app->user->isGuest 
+                'header' => !Yii::$app->user->isGuest 
                             ? Html::a(
                                     'Завтрак льготный<br />'.(isset($model->new_lunch2) ? $model->new_lunch2.' руб' : ''), 
                                     '#updateModal', 
@@ -224,10 +226,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     )
                             : 'Завтрак льготный<br />'.(isset($model->new_lunch2) ? $model->new_lunch2.' руб' : ''),
                 'attribute' =>'lunch2',
-                'contentOptions' => ['class' => (!\Yii::$app->user->isGuest ? 'hover' : null)],
+                'contentOptions' => ['class' => (!Yii::$app->user->isGuest ? 'hover' : null)],
                 'value' => $yes_no,
                 'format' => 'raw',
-                'headerOptions' => ['class' => !\Yii::$app->user->isGuest ? 'hover' : ''],
+                'headerOptions' => ['class' => !Yii::$app->user->isGuest ? 'hover' : ''],
                 'footer' => floatval($footer_sum['count_lunch2']),
                 'footerOptions' => ['data-footer' => [
                     floatval($footer_sum['sum_lunch2']),
@@ -237,7 +239,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'lunch3',
             [
                 //'header' => 'Завтрак М<br />'.(isset($model->new_lunch_m) ? $model->new_lunch_m.' руб' : ''),
-                'header' => !\Yii::$app->user->isGuest 
+                'header' => !Yii::$app->user->isGuest 
                             ? Html::a(
                                     'Завтрак М<br />'.(isset($model->new_lunch_m) ? $model->new_lunch_m.' руб' : ''), 
                                     '#updateModal', 
@@ -253,10 +255,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     )
                             : 'Завтрак М<br />'.(isset($model->new_lunch_m) ? $model->new_lunch_m.' руб' : ''),
                 'attribute' =>'lunch_m',
-                'contentOptions' => ['class' => (!\Yii::$app->user->isGuest ? 'hover' : null)],
+                'contentOptions' => ['class' => (!Yii::$app->user->isGuest ? 'hover' : null)],
                 'value' => $yes_no,
                 'format' => 'raw',
-                'headerOptions' => ['class' => !\Yii::$app->user->isGuest ? 'hover' : ''],
+                'headerOptions' => ['class' => !Yii::$app->user->isGuest ? 'hover' : ''],
                 'footer' => floatval($footer_sum['count_lunch_m']),
                 'footerOptions' => ['data-footer' => [
                     floatval($footer_sum['sum_lunch_m']),
@@ -265,7 +267,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 //'header' => 'Обед М<br />'.(isset($model->new_dinner_m) ? $model->new_dinner_m.' руб' : ''),
-                'header' => !\Yii::$app->user->isGuest 
+                'header' => !Yii::$app->user->isGuest 
                             ? Html::a(
                                     'Обед М<br />'.(isset($model->new_dinner_m) ? $model->new_dinner_m.' руб' : ''), 
                                     '#updateModal', 
@@ -281,10 +283,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     )
                             : 'Обед М<br />'.(isset($model->new_dinner_m) ? $model->new_dinner_m.' руб' : ''),
                 'attribute' =>'dinner_m',
-                'contentOptions' => ['class' => (!\Yii::$app->user->isGuest ? 'hover' : null)],
+                'contentOptions' => ['class' => (!Yii::$app->user->isGuest ? 'hover' : null)],
                 'value' => $yes_no,
                 'format' => 'raw',
-                'headerOptions' => ['class' => !\Yii::$app->user->isGuest ? 'hover' : ''],
+                'headerOptions' => ['class' => !Yii::$app->user->isGuest ? 'hover' : ''],
                 'footer' => floatval($footer_sum['count_dinner_m']),
                 'footerOptions' => ['data-footer' => [
                     floatval($footer_sum['sum_dinner_m']),
@@ -293,7 +295,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 //'header' => 'Полдник<br />'.(isset($model->new_dinner) ? $model->new_dinner.' руб' : ''),
-                'header' => !\Yii::$app->user->isGuest 
+                'header' => !Yii::$app->user->isGuest 
                             ? Html::a(
                                     'Полдник<br />'.(isset($model->new_dinner) ? $model->new_dinner.' руб' : ''), 
                                     '#updateModal', 
@@ -309,10 +311,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     )
                             : 'Полдник<br />'.(isset($model->new_dinner) ? $model->new_dinner.' руб' : ''),
                 'attribute' =>'dinner',
-                'contentOptions' => ['class' => (!\Yii::$app->user->isGuest ? 'hover' : null)],
+                'contentOptions' => ['class' => (!Yii::$app->user->isGuest ? 'hover' : null)],
                 'value' => $dinner,
                 'format' => 'raw',
-                'headerOptions' => ['class' => !\Yii::$app->user->isGuest ? 'hover' : ''],
+                'headerOptions' => ['class' => !Yii::$app->user->isGuest ? 'hover' : ''],
                 'footer' => floatval($footer_sum['count_dinner']),
                 'footerOptions' => ['data-footer' => [
                     floatval($footer_sum['sum_dinner']),
@@ -322,7 +324,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'header' => 'Нал',
                 'attribute' =>'cash',
-                'contentOptions' => ['class' => (!\Yii::$app->user->isGuest ? 'hover' : null)],
+                'contentOptions' => ['class' => (!Yii::$app->user->isGuest ? 'hover' : null)],
                 'value' => $pay,
                 'format' => 'raw',
                 'footerOptions' => ['data-footer' => [
@@ -338,7 +340,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'header' => 'Безнал',
                 'attribute' =>'card',
-                'contentOptions' => ['class' => (!\Yii::$app->user->isGuest ? 'hover' : null)],
+                'contentOptions' => ['class' => (!Yii::$app->user->isGuest ? 'hover' : null)],
                 'value' => $pay,
                 'format' => 'raw',
                 'footerOptions' => ['data-footer' => [
@@ -470,3 +472,14 @@ span.price {
     font-weight: normal;
 }
 CSS);
+$this->registerJs(<<<JS
+const myModalEl = document.getElementById('updateModal')
+myModalEl.addEventListener('shown.bs.modal', event => {
+    
+        let relatedTarget = event.relatedTarget;
+        console.log(relatedTarget);
+        let self = event.target;
+        console.log(self);
+        
+})
+JS);
