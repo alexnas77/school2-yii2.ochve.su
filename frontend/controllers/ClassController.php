@@ -26,7 +26,7 @@ class ClassController extends \yii\web\Controller
         
         $dateSQL = is_object($dateFormat) ? $dateFormat->format('Y-m-d') : date('Y-m-d');   
         
-        $dateStart = Settings::getParam('start');
+        $dateStart = \DateTime::createFromFormat('d.m.Y', Settings::getParam('start'))->format('Y-m-d');
         
         $dateTomorrowFormat = \DateTime::createFromFormat('d.m.Y', $date);
         
@@ -45,7 +45,7 @@ class ClassController extends \yii\web\Controller
         
         $query = (new \yii\db\Query())
                 ->select(['IFNULL(s.product_id, p.product_id) product_id',
-'s.date',
+'IFNULL(s.date,"'.$dateSQL.'") date',
 'IFNULL(s.category_id, p.category_id) category_id',
 "(SELECT SUM(s2.delta) FROM stat s2 WHERE (s2.product_id = p.product_id) AND (s2.date BETWEEN '".$dateStart."' AND '".date("Y-m-d",strtotime("-1 day",strtotime($dateSQL)))."')) before",
 's.breakfast_free',
@@ -229,7 +229,7 @@ class ClassController extends \yii\web\Controller
                 'sum_dinner_m' => 0,
             ];
         }
-        \Yii::debug($footer_sum);
+        //\Yii::debug($footer_sum);
         $footer_sum['sum_before'] = array_sum(ArrayHelper::getColumn($models, 'before'));
         $footer_sum['sum_after'] = array_sum(ArrayHelper::getColumn($models, 'after'));
         $footer_sum['sum_spent'] = array_sum([

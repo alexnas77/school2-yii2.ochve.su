@@ -8,6 +8,7 @@
 namespace frontend\components;
 
 use yii\helpers\Html;
+use yii\grid\Column;
 
 /**
  * Description of GridView
